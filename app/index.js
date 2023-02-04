@@ -57,7 +57,8 @@ router.use('', require('./v3/admin_routes/email'))
 router.use('', require('./v3/admin_routes/sms'))
 router.use('', require('./v3/admin_routes/legal'))
 router.use('', require('./v3/admin_routes/cancellation_reason'))
-router.use('', require('./v3/admin_routes/category'))
+router.use('', require('./v3/admin_routes/main_category'))
+router.use('', require('./v3/admin_routes/sub_category'))
 
 
 

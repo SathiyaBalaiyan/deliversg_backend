@@ -27,6 +27,7 @@ let Referral_code = require('mongoose').model('referral_code');
 let Request = require('mongoose').model('request');
 let Installation_setting = require('mongoose').model('installation_setting');
 let SubStore = require('mongoose').model('SubStore');
+let SubCategory = require('mongoose').model('sub_category');
 let Delivery = require('mongoose').model('delivery');
 let Documents = require('mongoose').model('document')
 let Promo_code = require('mongoose').model('promo_code');
@@ -61,6 +62,12 @@ exports.store_register = function (request_data, response_data) {
                             social_id = null;
                         } else {
                             social_id_array.push(social_id);
+                        }
+
+                        var subCategory_id = {"$match": {'sub_category_id': {$eq: null}}};
+                        if(request_data_body.sub_category_id != undefined)
+                        {
+                            subCategory_id = {"$match": {'sub_category_id': {$eq: mongoose.Types.ObjectId(request_data_body.sub_category_id)}}};
                         }
 
                         if (request_data_body.slogan === '' || request_data_body.slogan === 'null' || request_data_body.slogan === null) {
@@ -751,9 +758,12 @@ exports.pages = function (request_data, response_data) {
     });
 }
 
-exports.add_sub_store = function (request_data, response_data) {
-    utils.check_unique_details(request_data, [{ name: 'email', type: 'string' }], function (response) {
-        if (response.success) {
+exports.add_sub_store = function (request_data, response_data) 
+{
+    utils.check_unique_details(request_data, [{ name: 'email', type: 'string' }], function (response) 
+    {
+        if (response.success) 
+        {
             let request_data_body = request_data.body;
             request_data_body.email = ((request_data_body.email).trim()).toLowerCase();
             let store = response.store;
@@ -761,14 +771,18 @@ exports.add_sub_store = function (request_data, response_data) {
 
 
             let query = { $or: [{ 'email': request_data_body.email }, { 'phone': request_data_body.phone }] };
-            SubStore.findOne(query, function (err, sub_store) {
-                if (sub_store) {
+            SubStore.findOne(query, function (err, sub_store) 
+            {
+                if (sub_store) 
+                {
                     if (sub_store.email == request_data_body.email) {
                         return response_data.json({ success: false, error_code: STORE_ERROR_CODE.EMAIL_ALREADY_REGISTRED });
                     } else {
                        return  response_data.json({ success: false, error_code: STORE_ERROR_CODE.PHONE_NUMBER_ALREADY_REGISTRED });
                     }
-                } else {
+                } 
+                else 
+                {
                     delete request_data_body._id;
                     request_data_body.is_approved = true;
                     request_data_body.main_store_id = store._id;

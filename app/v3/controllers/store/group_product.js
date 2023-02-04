@@ -185,7 +185,8 @@ exports.get_group_list_of_group = function (request_data, response_data) {
         }
                                     
     }).sort({sequence_number:1})
-}
+};
+
 exports.get_product_group_data = function (request_data, response_data) {
     utils.check_unique_details(request_data, [{name: 'product_group_id', type: 'string'}], function (response) {
         if (response.success) {

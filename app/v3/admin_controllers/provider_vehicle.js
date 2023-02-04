@@ -226,6 +226,7 @@ exports.add_vehicle = function (request_data, response_data) {
     });
 };
 
+
 // provider_vehicle_approve_decline
 exports.provider_vehicle_approve_decline = function (request_data, response_data) {
     utils.check_request_params(request_data.body, [{name: 'vehicle_id', type: 'string'}], function (response) {

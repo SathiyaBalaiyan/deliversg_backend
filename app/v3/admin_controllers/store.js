@@ -14,7 +14,62 @@ var Product = require('mongoose').model('product');
 var City = require('mongoose').model('city');
 var Item = require('mongoose').model('item');
 var Review = require('mongoose').model('review');
+var SubCategory = require('mongoose').model('sub_category');
 var console = require('../utils/console');
+
+
+//To fetch sub categories based category
+exports.filter_sub_categories = function (request_data, response_data) {
+    utils.check_request_params(request_data.body, [{ name: 'store_delivery_id', type: 'string' }], function (response) {
+        if (response.success) {
+
+            var request_data_body = request_data.body;
+            var sub_category_query = {
+                $lookup:
+                        {
+                            from: "deliveries",
+                            localField: "store_delivery_id",
+                            foreignField: "_id",
+                            as: "subcategory"
+                        },    
+            };
+
+            var project = {
+                $project: {
+                            _id: 1,
+                            sub_category_name: 1,
+                            store_delivery_id: 1
+                        }
+            }
+            
+            // var condition = { "$match": { 'store_delivery_id': { $eq: Schema(store_delivery_id) } } };
+
+            var array_to_json_sub_category_query = {$unwind: "$subcategory"};
+            
+
+            SubCategory.aggregate([{$match: {store_delivery_id: mongoose.Types.ObjectId(request_data_body.store_delivery_id)}}, sub_category_query, array_to_json_sub_category_query, project]).then((SubCategories) => {
+                if (SubCategories.length == 0) {
+                    response_data.json({success: false, error_code: SUB_CATEGORY_ERROR_CODE.SUB_CATEGORY_DETAILS_NOT_FOUND
+                    });
+                } else {
+                    response_data.json({success: true,
+                        message: SUB_CATEGORY_MESSAGE_CODE.GET_SUB_CATEGORY_SUCCESSFULLY,
+                        SubCategories: SubCategories
+
+                    });
+                }
+            }, (error) => {
+                response_data.json({
+                    success: false,
+                    error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                });
+            });
+        } else {
+            response_data.json(response);
+        }
+    });
+
+};
 
 
 // store_list_search_sort
@@ -55,6 +110,17 @@ exports.store_list_search_sort = function (request_data, response_data) {
                         }
             };
             var array_to_json_delivery_query = {$unwind: "$delivery_details"};
+
+            var subcategory_query = {
+                $lookup:
+                        {
+                            from: "sub_categories",
+                            localField: "sub_category_id",
+                            foreignField: "_id",
+                            as: "subCategoriesName"
+                        }
+            };
+            var array_to_json_subcategory_query = {$unwind: "$subCategoriesName"};
 
             var number_of_rec = Number(request_data_body.number_of_rec);
             var page = request_data_body.page;
@@ -97,13 +163,22 @@ exports.store_list_search_sort = function (request_data, response_data) {
                 var condition1 = {$match: {'_id':{$in:store_ids}}};
             }
 
+            // var delivery_type_condition = {$match: {}};
+            // if (request_data_body.delivery_type_filter && request_data_body.delivery_type_filter.length>0) {
+            //     var delivery_type_filter =[];
+            //     request_data_body.delivery_type_filter.forEach(function(store_id){
+            //         delivery_type_filter.push(mongoose.Types.ObjectId(store_id));
+            //     })
+            //     delivery_type_condition = {$match: {'store_delivery_id':{$in:delivery_type_filter}}};
+            // }
+
             var delivery_type_condition = {$match: {}};
             if (request_data_body.delivery_type_filter && request_data_body.delivery_type_filter.length>0) {
                 var delivery_type_filter =[];
                 request_data_body.delivery_type_filter.forEach(function(store_id){
                     delivery_type_filter.push(mongoose.Types.ObjectId(store_id));
                 })
-                delivery_type_condition = {$match: {'store_delivery_id':{$in:delivery_type_filter}}};
+                delivery_type_condition = {$match: {'sub_category_id':{$in:delivery_type_filter}}};
             }
 
             var condition = {$match: {}};
@@ -130,6 +205,7 @@ exports.store_list_search_sort = function (request_data, response_data) {
                     country_details: {country_name: 1},
                     city_name: '$city_details.city_name',
                     delivery_type_name: '$delivery_details.delivery_name',
+                    sub_category_name: '$subCategoriesName.sub_category_name',
                     is_email_verified: 1,
                     is_phone_number_verified: 1,
                     is_table_reservation: "$table_settings_details.is_table_reservation",
@@ -187,7 +263,7 @@ exports.store_list_search_sort = function (request_data, response_data) {
             if (page) {
 
                 Store.aggregate([condition1, condition, filter, delivery_type_condition, city_query, country_query, array_to_json, array_to_json_city_query, delivery_query, array_to_json_delivery_query
-                            ,table_settings_lookup, table_settings_unwind, search ,  project, sort, count, project1
+                            , subcategory_query, array_to_json_subcategory_query, table_settings_lookup, table_settings_unwind, search ,  project, sort, count, project1
                 ]).then((stores) => {
                     if (stores.length == 0) {
                         response_data.json({success: true, stores: [], count: 0});
@@ -210,7 +286,7 @@ exports.store_list_search_sort = function (request_data, response_data) {
             } else
             {
                 Store.aggregate([condition1, condition, filter, delivery_type_condition, city_query, country_query, array_to_json, array_to_json_city_query, delivery_query, array_to_json_delivery_query
-                    ,table_settings_lookup, table_settings_unwind, search , project, sort]).then((stores) => {
+                    , subcategory_query, array_to_json_subcategory_query, table_settings_lookup, table_settings_unwind, search , project, sort]).then((stores) => {
                         if (stores.length == 0) {
                             response_data.json({success: true, stores: [], count: 0});
                         } else
@@ -235,6 +311,7 @@ exports.store_list_search_sort = function (request_data, response_data) {
         }
     });
 };
+
 
 exports.get_store_data = function (request_data, response_data) {
   
@@ -649,7 +726,6 @@ exports.get_store_list_for_city = function (request_data, response_data) {
                 });
             } else
             {
-
                 Store.find({is_business: true, city_id: city_id}).then((store) => {
                     if (store.length == 0) {
                         response_data.json({success: false, error_code: DELIVERY_ERROR_CODE.DELIVERY_DATA_NOT_FOUND});

@@ -5,6 +5,7 @@ var router = express.Router();
 
     //router.route('/admin/store_list').get(store.store_list);
     router.post('/admin/store_list_search_sort',store.store_list_search_sort);
+    router.post('/admin/filter_sub_categories',store.filter_sub_categories);
     
     router.post('/admin/get_store_data', store.get_store_data);
     router.post('/admin/get_admin_store_detail', store.get_admin_store_detail);
