@@ -4,7 +4,6 @@ require('../utils/constants');
 var utils = require('../utils/utils');
 var SubCategory = require('mongoose').model('sub_category');
 var Delivery = require('mongoose').model('delivery');
-var MainCategory = require('mongoose').model('main_category');
 var mongoose = require('mongoose');
 var console = require('../utils/console');
 

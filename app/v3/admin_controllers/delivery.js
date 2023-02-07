@@ -64,6 +64,7 @@ exports.add_delivery_data = function (request_data, response_data) {
                         var file_data;
                         var file_id;
 
+                        
                         for (i = 0; i < file_list_size; i++) {
                             file_data = files_details[i];
                             file_id = file_data.fieldname;
@@ -102,7 +103,9 @@ exports.add_delivery_data = function (request_data, response_data) {
 
                 }
             });
-        } else {
+        } 
+        else 
+        {
             response_data.json(response);
         }
     });

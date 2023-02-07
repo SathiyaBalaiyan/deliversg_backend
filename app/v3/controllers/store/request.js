@@ -2710,6 +2710,7 @@ exports.get_vehicle_list = function (request_data, response_data) {
     });
 };
 
+
 exports.get_vehicles_list = function (request_data, response_data) {
     utils.check_unique_details(request_data, [], function (response) {
         // console.log('--------get vehicle list---------------')

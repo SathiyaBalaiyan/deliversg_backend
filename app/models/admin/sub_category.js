@@ -4,7 +4,6 @@ var autoIncrement = require('mongoose-auto-increment');
 var sub_category = new schema({
     unique_id: Number,
     store_delivery_id: {type: schema.Types.ObjectId},
-    store_id: {type: schema.Types.ObjectId ,default:null},
     sub_category_name: {type: String},
     created_at: {
         type: Date,

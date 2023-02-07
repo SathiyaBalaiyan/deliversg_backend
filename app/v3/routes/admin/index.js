@@ -11,6 +11,7 @@ var document = require('../../controllers/admin/document');// include document c
 var request = require('../../controllers/store/request'); // include request controller
 let seo = require('../../controllers/admin/seo')
 let script = require('../../admin_controllers/script_page')
+var sub_category = require('../../admin_controllers/sub_category')
 var activity_logs = require('../../controllers/admin/activity_logs') // include activity logs controller
 
     router.post('/get_activity_logs', activity_logs.get_activity_logs)
@@ -65,5 +66,8 @@ var activity_logs = require('../../controllers/admin/activity_logs') // include 
     router.get('/api/admin/get_script_page', script.getScriptPage);
     router.post('/api/admin/delete_script_page', script.deleteScriptPage);
     router.post('/api/admin/update_script_page', script.updateScriptPage);
+
+    router.post('/admin/add_sub_category', sub_category.add_sub_category);
+
 
 module.exports = router;

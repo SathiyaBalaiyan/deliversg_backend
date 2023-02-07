@@ -80,7 +80,6 @@ module.exports = function () {
     require('../app/models/admin/image_setting');
     require('../app/models/admin/transfer_history');
     require('../app/models/admin/mass_notification');
-    require('../app/models/admin/main_category');
     require('../app/models/user/user');
     require('../app/models/user/card');
     require('../app/models/user/order');
