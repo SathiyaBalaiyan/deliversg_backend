@@ -17,9 +17,15 @@ exports.add_sub_category = function (request_data, response_data)
         {
             var request_data_body = request_data.body;
 
-            
-
             var add_sub_category = new SubCategory(request_data_body);
+
+            let image_file = request_data.files;
+            if (image_file != undefined && image_file.length > 0) {
+                let image_name = add_sub_category._id + utils.generateServerToken(4);
+                let url = utils.getStoreImageFolderPath(FOLDER_NAME.SUB_CATEGORY_IMAGES) + image_name + FILE_EXTENSION.USER;
+                add_sub_category.sub_category_image = url;
+                utils.storeImageToFolder(image_file[0].path, image_name + FILE_EXTENSION.USER, FOLDER_NAME.SUB_CATEGORY_IMAGES);
+            }
 
             let query = { $or: [{ 'sub_category_name': request_data_body.sub_category_name }] };
 

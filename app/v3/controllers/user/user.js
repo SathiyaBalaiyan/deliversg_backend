@@ -171,7 +171,6 @@ exports.user_register = function (request_data, response_data) {
                                             let url = utils.getStoreImageFolderPath(FOLDER_NAME.USER_PROFILES) + image_name + FILE_EXTENSION.USER;
                                             user_data.image_url = url;
                                             utils.storeImageToFolder(image_file[0].path, image_name + FILE_EXTENSION.USER, FOLDER_NAME.USER_PROFILES);
-
                                         }
 
                                         if (social_id == undefined || social_id == null || social_id == "") {

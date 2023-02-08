@@ -5,6 +5,7 @@ var sub_category = new schema({
     unique_id: Number,
     store_delivery_id: {type: schema.Types.ObjectId},
     sub_category_name: {type: String},
+    sub_category_image: {type: String},
     created_at: {
         type: Date,
         default: Date.now

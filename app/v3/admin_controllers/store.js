@@ -37,8 +37,10 @@ exports.filter_sub_categories = function (request_data, response_data) {
             var project = {
                 $project: {
                             _id: 1,
+                            store_delivery_id: 1,
                             sub_category_name: 1,
-                            store_delivery_id: 1
+                            sub_category_image: 1
+                            
                         }
             }
             

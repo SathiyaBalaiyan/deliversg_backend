@@ -32,6 +32,7 @@ var Provider_analytic_daily = require('mongoose').model('provider_analytic_daily
 var Transfer_History = require('mongoose').model('transfer_history');
 var CityZone = require('mongoose').model('cityzone');
 var ZoneValue = require('mongoose').model('zonevalue');
+var SubCategory = require('mongoose').model('sub_category');
 var geolib = require('geolib');
 var console = require('./console');
 var paystack_refund = require('../controllers/user/card')
@@ -1405,6 +1406,9 @@ exports.getImageFolderName = function (id) {
         
         case FOLDER_NAME.SEO_OG_IMAGES:
             return 'seo_og_images/'
+
+        case FOLDER_NAME.SUB_CATEGORY_IMAGES:
+            return 'sub_category_images/'
             
         default:
             break;
