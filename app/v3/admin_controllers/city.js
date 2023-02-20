@@ -13,6 +13,34 @@ var DOMParser = require('xmldom').DOMParser;
 var togeojson = require('togeojson');
 var console = require('../utils/console');
 
+//To get bad weather condition
+exports.get_bad_weather_status = function (request_data, response_data) {
+    utils.check_request_params(request_data.body, [{ name: 'city_id', type: 'string' }], function (response) 
+    {
+        if (response.success) {
+
+            var request_data_body = request_data.body;
+            City.findOne({_id: request_data_body.city_id}, {bad_weather: 1, city_name: 1, city_code: 1, timezone: 1}).then((country) => {
+                if (!country) {
+                    response_data.json({success: false, error_code: PRODUCT_ERROR_CODE.PRODUCT_DATA_NOT_FOUND});
+                } else {
+                    response_data.json({success: true,
+                        message: PRODUCT_MESSAGE_CODE.PRODUCT_LIST_SUCCESSFULLY,
+                        country: country
+                    });
+                }
+            }, (error) => {
+                console.log(error);
+                response_data.json({
+                    success: false,
+                    error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                });
+            });
+        } else {
+            response_data.json(response);
+        }
+    });
+}
 
 // get_server_country_list
 exports.get_server_country_list = function (request_data, response_data) {
@@ -114,8 +142,6 @@ exports.add_city_data = function (request_data, response_data) {
     });
 };
 
-
-
 /// for view all city
 exports.city_list = function (request_data, response_data) {
     utils.check_request_params(request_data.body, [], function (response) {
@@ -194,7 +220,6 @@ exports.city_list_search_sort = function (request_data, response_data) {
         }
     });
 };
-
 
 
 // get_city_detail

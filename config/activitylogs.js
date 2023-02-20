@@ -16,6 +16,7 @@ let public_image_route = [
     "/store_items/",
     "/cart_items/",
     "/delivery_type_images/",
+    "/sub_category_images/",
     "/delivery_icon_images/",
     "/delivery_map_pin_images/",
     "/service_type_images/",
@@ -37,6 +38,7 @@ const high_priority = [
     { url: "api/user/register", type: 'POST' },
     { url: "api/user/get_store_list", type: 'POST' },
     { url: "api/user/get_delivery_store_list", type: 'POST' },
+    { url: "api/user/get_subcategory_store_list", type: 'POST' },
     { url: "api/user/get_delivery_list_for_nearest_city", type: 'POST' },
 
     { url: "api/admin/check_app_keys", type: 'POST' },
@@ -47,6 +49,7 @@ const high_priority = [
     { url: "api/user/user_get_specification_list", type: 'POST' },
     { url: "api/user/add_item_in_cart", type: 'POST' },
     { url: "api/user/get_cart", type: 'POST' },
+    { url: "api/user/replace_order", type: 'POST' },
     { url: "api/user/get_order_cart_invoice", type: 'POST' },
     { url: "api/user/get_courier_order_invoice", type: 'POST' },
     { url: "api/user/get_detail", type: 'POST' },
@@ -162,6 +165,7 @@ const medium_priority = [
     { url: "api/user/get_order_detail", type: 'POST' },
     { url: "api/user/delete_card", type: 'POST' },
 
+    { url: "admin/add_sub_category", type: "POST" },
     { url: "admin/lists", type: "GET" },
     { url: "api/store/sub_store_login", type: "POST" },
     { url: "api/store/login", type: "POST" },

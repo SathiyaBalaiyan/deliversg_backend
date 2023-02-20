@@ -25,6 +25,167 @@ var console = require('../../utils/console');
 var mongoose = require('mongoose');
 var TableSettings = require('mongoose').model('table_settings');
 
+// exports.reorder = function (request_data, response_data) 
+//   {
+//     utils.check_request_params(request_data.body, [{ name: 'user_id', type: 'string' }, { name: 'order_id', type: 'string' }], function (response) {
+//         if (response.success) {
+
+//             let orderPayment = new Order_payment(request_data_body);
+
+//             var request_data_body = request_data.body;
+//             var order_query = {
+//                 $lookup:
+//                         {
+//                             from: "orders",
+//                             localField: "order_id",
+//                             foreignField: "_id",
+//                             as: "orders"
+//                         },    
+//             };
+//             let unwind = {
+//                 $unwind: {
+//                     path: "$orders",
+//                     preserveNullAndEmptyArrays: true
+//                 }
+//             };
+
+            
+//             var project = {
+//                 $project: {
+//                             _id: 1,
+//                             cart_id: 1,
+//                             store_id: 1,
+//                             city_id: 1,
+//                             total_item_count: 1,
+//                             "order_payment_id": "$orders.order_payment_id",
+//                             "delivery_type": "$orders.delivery_type",
+//                             "destination_addresses": "$orders.destination_addresses"
+                            
+//                         }
+//             }
+
+//             Order_payment.aggregate([{$match: {user_id: mongoose.Types.ObjectId(request_data_body.user_id), order_id: mongoose.Types.ObjectId(request_data_body.order_id)}}, order_query, unwind, project]).then((OrderPay) => {
+
+                
+//                 let users_documents = [];
+//                 OrderPay.forEach((project, index) => {
+//                     users_documents.push({
+//                         _id: project.cart_id,
+//                         user_id: project.user_id,
+//                         store_id: project.store_id,
+//                         total_item_count: project.total_item_count,
+//                         total_cart_price: project.total_cart_price,
+//                         destination_addresses: project.destination_addresses
+//                     });
+//                 });
+//                 Cart.insertMany(users_documents);
+
+//                 if (OrderPay.length == 0) 
+//                 {
+//                     response_data.json({ success: false, error_code: SUB_CATEGORY_ERROR_CODE.SUB_CATEGORY_DETAILS_NOT_FOUND });
+//                 } 
+//                 else 
+//                 {
+                    
+//                     response_data.json({ success: true,
+//                     message: SUB_CATEGORY_MESSAGE_CODE.GET_SUB_CATEGORY_SUCCESSFULLY,
+//                     OrderPay: OrderPay });
+
+                    
+//                 }
+//             }, (error) => {
+//                 response_data.json({
+//                     success: false,
+//                     error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+//                 });
+//             });
+//         } else {
+//             response_data.json(response);
+//         }
+//     });
+// };
+
+// exports.reorder = function (request_data, response_data) 
+// {
+//     utils.check_request_params(request_data.body, [{ name: 'user_id', type: 'string' }, { name: 'order_id', type: 'string' }], function (response) {
+//         if (response.success) {
+
+//             var request_data_body = request_data.body;
+//             var order_query = {
+//                 $lookup:
+//                         {
+//                             from: "orders",
+//                             localField: "order_id",
+//                             foreignField: "_id",
+//                             as: "order"
+//                         },    
+//             };
+//             let unwind = {
+//                 $unwind: {
+//                     path: "$order",
+//                     preserveNullAndEmptyArrays: true
+//                 }
+//             };
+
+//             var store_query = {
+//                 $lookup:
+//                         {
+//                             from: "stores",
+//                             localField: "store_id",
+//                             foreignField: "_id",
+//                             as: "store_detail"
+//                         },    
+//             };
+//             let array_to_json_store_query = {
+//                 $unwind: {
+//                     path: "$store_detail",
+//                     preserveNullAndEmptyArrays: true
+//                 }
+//             };
+
+//             var project = {
+//                 $project: {
+//                             cart_id: 1,
+//                             "user_id": "$order.user_id",
+//                             store_id: 1,
+//                             "order_payment_id": "$order.order_payment_id",
+//                             "order_id": "$order._id",
+//                             city_id: 1,
+//                             item_tax: 1,
+//                             "delivery_type": "$order.delivery_type",
+//                             "destination_addresses": "$order.destination_addresses",
+//                             total_item_count: 1,
+//                             total_cart_price: 1,
+//                             "is_use_item_tax": "$store_detail.is_use_item_tax",
+//                             "is_tax_included": "$store_detail.is_tax_included",
+//                             taxes: 1
+//                         }
+//             }
+
+            //  Order_payment.aggregate([{$match: {user_id: mongoose.Types.ObjectId(request_data_body.user_id), order_id: mongoose.Types.ObjectId(request_data_body.order_id)}}, order_query, unwind, store_query, array_to_json_store_query, project]).then((OrderPay) => {
+//                 if (OrderPay.length == 0) {
+//                     response_data.json({success: false, error_code: SUB_CATEGORY_ERROR_CODE.SUB_CATEGORY_DETAILS_NOT_FOUND
+//                     });
+//                 } else {   
+//                     response_data.json({success: true,
+//                         message: SUB_CATEGORY_MESSAGE_CODE.GET_SUB_CATEGORY_SUCCESSFULLY,
+//                         OrderPay: OrderPay
+
+
+//                     });
+//                 }
+//             }, (error) => {
+//                 response_data.json({
+//                     success: false,
+//                     error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+//                 });
+//             });
+//         } else {
+//             response_data.json(response);
+//         }
+//     });
+// };
+
 exports.create_order_from_others = function (request_data, response_data) {
 
     utils.check_request_params(request_data.body, [{ name: 'cart_id', type: 'string' }], function (response) {
@@ -600,6 +761,7 @@ exports.set_order_status = function (request_data, response_data) {
     });
 
 };
+
 exports.capture_payment = function (store, order, request_data, order_payment, response_data) {
     //console.log('------------capture call----')
     if (order_payment.is_payment_mode_cash == false && order_payment.capture_amount > 0) {

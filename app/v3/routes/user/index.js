@@ -28,6 +28,7 @@ router.post('/api/user/rating_to_provider', user.user_rating_to_provider);
 router.post('/api/user/rating_to_store', user.user_rating_to_store);
 router.post('/api/user/get_store_list', user.get_store_list);
 router.post('/api/user/get_delivery_store_list', user.get_delivery_store_list);
+router.post('/api/user/get_subcategory_store_list', user.get_subcategory_store_list);
 router.post('/api/user/get_delivery_list_for_nearest_city', user.get_delivery_list_for_nearest_city);
 router.post('/api/user/get_order_cart_invoice', user.get_order_cart_invoice);
 router.post('/api/user/get_courier_order_invoice', user.get_courier_order_invoice);
@@ -64,6 +65,7 @@ router.post('/api/store/store_cancel_or_reject_order', order.store_cancel_or_rej
 // cart api
 router.post('/api/user/add_item_in_cart', cart.add_item_in_cart);
 router.post('/api/user/get_cart', cart.get_cart);
+router.post('/api/user/replace_order', cart.replace_order);
 router.post('/api/user/clear_cart', cart.clear_cart);
 router.post('/api/user/get_payment_gateway', cart.get_payment_gateway);
 router.post('/api/user/change_delivery_address', cart.change_delivery_address);

@@ -1405,7 +1405,7 @@ exports.getImageFolderName = function (id) {
             return 'table_images/'
         
         case FOLDER_NAME.SEO_OG_IMAGES:
-            return 'seo_og_images/'
+            return 'seo_og_images/' 
 
         case FOLDER_NAME.SUB_CATEGORY_IMAGES:
             return 'sub_category_images/'

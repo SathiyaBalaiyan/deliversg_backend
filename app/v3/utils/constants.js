@@ -310,6 +310,7 @@ exports = FILE_EXTENSION = {
     LOGO: ".jpg",
     PROMO: ".jpg",
     SEO_OG: ".jpg",
+    SUB_CATEGORY: ".jpg",
 };
 exports = FOLDER_NAME = {
     USER_PROFILES: 10,
@@ -339,7 +340,8 @@ exports = FOLDER_NAME = {
     ARRIVED_ORDER_IMAGES: 65,
     PROMO_IMAGES: 66,
     TABLE_IMAGES: 67,
-    SEO_OG_IMAGES: 68
+    SEO_OG_IMAGES: 68,
+    SUB_CATEGORY_IMAGES: 69
 };
 exports = ADMIN_PROFIT_ON_ORDER = [
     {ID: 1, NAME: "PERCENTAGE"},

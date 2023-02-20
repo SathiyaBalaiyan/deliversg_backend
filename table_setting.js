@@ -6,6 +6,7 @@ var TableSettings = require('mongoose').model('table_settings');
 var Store = require('mongoose').model('store');
 
 
+
 Store.find({}).then(stores => {
     stores.forEach(store => {
         TableSettings.find({store_id: store._id}).then(table_settings => {

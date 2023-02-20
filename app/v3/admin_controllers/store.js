@@ -49,7 +49,7 @@ exports.filter_sub_categories = function (request_data, response_data) {
             var array_to_json_sub_category_query = {$unwind: "$subcategory"};
             
 
-            SubCategory.aggregate([{$match: {store_delivery_id: mongoose.Types.ObjectId(request_data_body.store_delivery_id)}}, sub_category_query, array_to_json_sub_category_query, project]).then((SubCategories) => {
+            SubCategory.aggregate([{$match: {store_delivery_id: mongoose.Types.ObjectId(request_data_body.store_delivery_id)}}, project]).then((SubCategories) => {
                 if (SubCategories.length == 0) {
                     response_data.json({success: false, error_code: SUB_CATEGORY_ERROR_CODE.SUB_CATEGORY_DETAILS_NOT_FOUND
                     });

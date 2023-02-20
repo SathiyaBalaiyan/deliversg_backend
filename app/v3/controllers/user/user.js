@@ -37,6 +37,30 @@ const { Console } = require('console');
 let ProductGroup = require('mongoose').model('ProductGroup');
 let Cancellation_reason = require('mongoose').model('cancellation_reason');
 
+let date_time = new Date();
+let current_date = date_time.setTime(date_time.getTime() + (150 * 60 * 1000));
+console.log(date_time);
+
+let date = ("0" + date_time.getDate()).slice(-2);
+
+// get current month
+let month = ("0" + (date_time.getMonth() + 1)).slice(-2);
+
+// get current year
+let year = date_time.getFullYear();
+
+// get current hours
+let hours = date_time.getHours();
+
+// get current minutes
+let minutes = ("0" + date_time.getMinutes()).slice(-2);
+
+// get current seconds
+let seconds = ("0" + date_time.getSeconds()).slice(-2);
+
+console.log(year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
+console.log(new Date());
+
 // USER REGISTER API
 exports.user_register = function (request_data, response_data) {
     utils.check_request_params(request_data.body, [{ name: 'email', type: 'string' }/*, { name: 'country_id', type: 'string' }*/, { name: 'phone', type: 'string' },
@@ -1607,8 +1631,8 @@ exports.get_delivery_store_list = function (request_data, response_data) {
             let ads = [];
             City.findOne({ _id: request_data_body.city_id }).then((city) => {
 
-                if (city) {
-
+                if (city) 
+                {
                     let lookup = {
                         $lookup: {
                             from: "stores",
@@ -1723,6 +1747,363 @@ exports.get_delivery_store_list = function (request_data, response_data) {
                                         { "is_visible": { "$eq": true } },
                                         { "city_id": { $eq: Schema(city_id) } },
                                         { "store_delivery_id": { $eq: Schema(store_delivery_id) } }
+                                    ]
+                                }
+                            },
+                                {
+                                    $lookup:
+                                    {
+                                        from: "items",
+                                        localField: "_id",
+                                        foreignField: "store_id",
+                                        as: "item_detail"
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from: "table_settings",
+                                        localField: "_id",
+                                        foreignField: "store_id",
+                                        as: "table_settings_details"
+                                    }
+                                },
+                                {
+                                    $unwind: {
+                                        path: "$table_settings_details",
+                                        preserveNullAndEmptyArrays: true
+                                    }
+                                },
+                                {
+                                    $group: {
+                                        _id: '$_id',
+                                        name: { $first: { $ifNull: [{ $arrayElemAt: ["$name", Number(request_data.headers.lang)] }, { $ifNull: [{ $arrayElemAt: ["$name", 0] }, ""] }] } },
+                                        image_url: { $first: '$image_url' },
+                                        delivery_time: { $first: '$delivery_time' },
+                                        delivery_time_max: { $first: '$delivery_time_max' },
+                                        user_rate: { $first: '$user_rate' },
+                                        user_rate_count: { $first: '$user_rate_count' },
+                                        delivery_radius: { $first: '$delivery_radius' },
+                                        is_provide_delivery_anywhere: { $first: '$is_provide_delivery_anywhere' },
+                                        is_provide_pickup_delivery: { $first: '$is_provide_pickup_delivery' },
+                                        website_url: { $first: '$website_url' },
+                                        slogan: { $first: '$slogan' },
+                                        is_visible: { $first: '$is_visible' },
+                                        is_store_busy: { $first: '$is_store_busy' },
+                                        phone: { $first: '$phone' },
+                                        item_tax: { $first: '$item_tax' },
+                                        is_use_item_tax: { $first: '$is_use_item_tax' },
+                                        country_phone_code: { $first: '$country_phone_code' },
+                                        famous_products_tags: { $first: '$famous_products_tags' },
+                                        store_time: { $first: '$store_time' },
+                                        store_delivery_time: { $first: '$store_delivery_time' },
+                                        location: { $first: '$location' },
+                                        address: { $first: '$address' },
+                                        is_taking_schedule_order: { $first: '$is_taking_schedule_order' },
+                                        is_order_cancellation_charge_apply: { $first: '$is_order_cancellation_charge_apply' },
+                                        is_store_pay_delivery_fees: { $first: '$is_store_pay_delivery_fees' },
+                                        branchio_url: { $first: '$branchio_url' },
+                                        referral_code: { $first: '$referral_code' },
+                                        price_rating: { $first: '$price_rating' },
+                                        languages_supported: { $first: '$languages_supported' },
+                                        items: { $first: '$item_detail.name' },
+                                        distance: { $first: '$distance' },
+                                        table_settings_details: { $first: "$table_settings_details" }
+                                    }
+                                },
+                                { $unwind: "$items" },
+                                {
+                                    $project: {
+                                        _id: 1,
+                                        name: 1,
+                                        image_url: 1,
+                                        delivery_time: 1,
+                                        delivery_time_max: 1,
+                                        user_rate: 1,
+                                        user_rate_count: 1,
+                                        delivery_radius: 1,
+                                        is_provide_delivery_anywhere: 1,
+                                        is_provide_pickup_delivery: 1,
+                                        website_url: 1,
+                                        slogan: 1,
+                                        is_visible: 1,
+                                        is_store_busy: 1,
+                                        phone: 1,
+                                        item_tax: 1,
+                                        is_use_item_tax: 1,
+                                        country_phone_code: 1,
+                                        famous_products_tags: 1,
+                                        store_time: 1,
+                                        store_delivery_time: 1,
+                                        location: 1,
+                                        address: 1,
+                                        is_taking_schedule_order: 1,
+                                        is_order_cancellation_charge_apply: 1,
+                                        is_store_pay_delivery_fees: 1,
+                                        branchio_url: 1,
+                                        referral_code: 1,
+                                        languages_supported: 1,
+                                        price_rating: 1,
+                                        items: { $ifNull: [{ $arrayElemAt: ["$items", Number(request_data.headers.lang)] }, { $ifNull: [{ $arrayElemAt: ["$items", 0] }, ""] }] },
+                                        distance: 1,
+                                        table_settings_details: 1,
+                                        is_table_reservation_with_order: { $ifNull: ["$table_settings_details.is_table_reservation_with_order", false] },
+                                        is_table_reservation: { $ifNull: ["$table_settings_details.is_table_reservation", false] }
+                                    }
+                                },
+                                {
+                                    $group: {
+                                        _id: '$_id',
+                                        name: { $first: '$name' },
+                                        image_url: { $first: '$image_url' },
+                                        delivery_time: { $first: '$delivery_time' },
+                                        delivery_time_max: { $first: '$delivery_time_max' },
+                                        user_rate: { $first: '$user_rate' },
+                                        user_rate_count: { $first: '$user_rate_count' },
+                                        delivery_radius: { $first: '$delivery_radius' },
+                                        is_provide_delivery_anywhere: { $first: '$is_provide_delivery_anywhere' },
+                                        website_url: { $first: '$website_url' },
+                                        slogan: { $first: '$slogan' },
+                                        is_visible: { $first: '$is_visible' },
+                                        is_store_busy: { $first: '$is_store_busy' },
+                                        phone: { $first: '$phone' },
+                                        item_tax: { $first: '$item_tax' },
+                                        is_use_item_tax: { $first: '$is_use_item_tax' },
+                                        country_phone_code: { $first: '$country_phone_code' },
+                                        famous_products_tags: { $first: '$famous_products_tags' },
+                                        store_time: { $first: '$store_time' },
+                                        store_delivery_time: { $first: '$store_delivery_time' },
+                                        location: { $first: '$location' },
+                                        address: { $first: '$address' },
+                                        is_taking_schedule_order: { $first: '$is_taking_schedule_order' },
+                                        is_order_cancellation_charge_apply: { $first: '$is_order_cancellation_charge_apply' },
+                                        is_provide_pickup_delivery: { $first: '$is_provide_pickup_delivery' },
+                                        is_store_pay_delivery_fees: { $first: '$is_store_pay_delivery_fees' },
+                                        branchio_url: { $first: '$branchio_url' },
+                                        referral_code: { $first: '$referral_code' },
+                                        languages_supported: { $first: '$languages_supported' },
+                                        price_rating: { $first: '$price_rating' },
+                                        distance: { $first: '$distance' },
+                                        items: { $addToSet: "$items" },
+                                        is_table_reservation_with_order: { $first: "$is_table_reservation_with_order" },
+                                        is_table_reservation: { $first: "$is_table_reservation" }
+                                    }
+                                },
+                                {
+                                    $sort: { distance: 1 }
+                                },
+                                {
+                                    $group: {
+                                        _id: null,
+                                        count: { $sum: 1 },
+                                        results: {
+                                            $push: '$$ROOT'
+                                        }
+                                    }
+                                }
+                            ];
+
+                            if (perPage) {
+                                store_aggregate.push({
+                                    $project: {
+                                        _id: 0,
+                                        count: 1,
+                                        results: {
+                                            $slice: ['$results', page ? (page - 1) * perPage : 0, perPage]
+                                        }
+                                    }
+                                })
+                            }
+
+                            Store.aggregate(store_aggregate).then((stores) => {
+
+                                if (stores.length == 0) {
+                                    response_data.json({ success: false, error_code: USER_ERROR_CODE.STORE_LIST_NOT_FOUND });
+                                } else {
+                                    response_data.json({
+                                        success: true,
+                                        message: USER_MESSAGE_CODE.GET_STORE_LIST_SUCCESSFULLY,
+                                        server_time: server_time,
+                                        ads: ads,
+                                        currency_sign: country.currency_sign,
+                                        stores: stores[0],
+                                        city_name: city.city_name
+                                    });
+                                }
+                            }, (error) => {
+                                console.log(error)
+                                response_data.json({
+                                    success: false,
+                                    error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                                });
+                            });
+                        }, (error) => {
+                            console.log(error)
+                            response_data.json({
+                                success: false,
+                                error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                            });
+                        });
+
+
+                        // }, (error) => {
+                        //     console.log(error)
+                        //     response_data.json({
+                        //         success: false,
+                        //         error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                        //     });
+                        // });
+
+                    }, (error) => {
+                        console.log(error)
+                        response_data.json({
+                            success: false,
+                            error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                        });
+                    });
+                }
+            }, error => {
+                console.log(error)
+                response_data.json({
+                    success: false,
+                    error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                });
+            })
+        } else {
+            response_data.json(response);
+        }
+    });
+};
+
+//To get store list using sub category id and city id
+exports.get_subcategory_store_list = function (request_data, response_data) {
+
+    utils.check_request_params(request_data.body, [{ name: 'city_id', type: 'string' }, { name: 'sub_category_id', type: 'string' }], function (response) {
+        if (response.success) {
+
+            let request_data_body = request_data.body;
+            let Schema = mongoose.Types.ObjectId;
+            let server_time = new Date();
+            let city_id = request_data_body.city_id;
+            let sub_category_id = request_data_body.sub_category_id;
+            let ads = [];
+            City.findOne({ _id: request_data_body.city_id }).then((city) => {
+
+                if (city) 
+                {
+                    let lookup = {
+                        $lookup: {
+                            from: "stores",
+                            localField: "sub_category_id",
+                            foreignField: "_id",
+                            as: "store_detail"
+                        }
+                    };
+                    let unwind = {
+                        $unwind: {
+                            path: "$store_detail",
+                            preserveNullAndEmptyArrays: true
+                        }
+                    };
+                    let city_condition = {
+                        "$match": {
+                            $and: [
+                                { $or: [{ city_id: { $eq: mongoose.Types.ObjectId(request_data_body.city_id) } }, { city_id: { $eq: mongoose.Types.ObjectId(ID_FOR_ALL.ALL_ID) } }] },
+                                { country_id: { $eq: mongoose.Types.ObjectId(city.country_id) } }
+                            ]
+                        }
+                    };
+                    let project = {
+                        $project: {
+                            _id: '$_id',
+                            ads_detail: 1,
+                            store_id: 1,
+                            image_url: 1,
+                            is_ads_redirect_to_store: 1,
+                            is_ads_have_expiry_date: 1,
+                            image_for_banner: 1,
+                            image_for_mobile: 1,
+                            expiry_date: 1,
+                            "store_detail": {
+                                $cond: {
+                                    if: { $ifNull: ["$store_detail", false] }, then: {
+                                        "_id": "store_detail._id",
+                                        "languages_supported": "$store_detail.languages_supported",
+                                        "is_use_item_tax": "$store_detail.is_use_item_tax",
+                                        "is_tax_included": "$store_detail.is_tax_included",
+                                        "item_tax": "$store_detail.item_tax",
+                                        "is_provide_pickup_delivery": "$store_detail.is_provide_pickup_delivery",
+                                        "delivery_time_max": "$store_detail.delivery_time_max",
+                                        "delivery_radius": "$store_detail.delivery_radius",
+                                        "is_taking_schedule_order": "$store_detail.is_taking_schedule_order",
+                                        "is_store_busy": "$store_detail.is_store_busy",
+                                        "famous_products_tags": "$store_detail.famous_products_tags",
+                                        "currency": "$store_detail.currency",
+                                        "delivery_time": "$store_detail.delivery_time",
+                                        "price_rating": "$store_detail.price_rating",
+                                        "country_phone_code": "$store_detail.country_phone_code",
+                                        "user_rate": "$store_detail.user_rate",
+                                        "store_time": "$store_detail.store_time",
+                                        "store_delivery_time": "$store_detail.store_delivery_time",
+                                        "email": "$store_detail.email",
+                                        "address": "$store_detail.address",
+                                        "image_url": "$store_detail.image_url",
+                                        "user_rate_count": "$store_detail.user_rate_count",
+                                        "website_url": "$store_detail.website_url",
+                                        "phone": "$store_detail.phone",
+                                        "_id": "$store_detail._id",
+                                        "slogan": "$store_detail.slogan",
+                                        "store_delivery_type_id": "$store_detail.sub_category_id",
+                                        "location": "$store_detail.location",
+                                        "name": { $ifNull: [{ $arrayElemAt: ["$store_detail.name", Number(request_data.headers.lang)] }, { $ifNull: [{ $arrayElemAt: ["$store_detail.name", 0] }, ""] }] }
+                                    }, else: null
+                                }
+                            }
+                        }
+                    }
+
+                    let page = 0;
+                    let perPage;
+
+                    if (request_data_body.per_page) {
+                        page = Number(request_data_body.page)
+                        perPage = Number(request_data_body.per_page)
+                    }
+
+                    let ads_condition = { "$match": { $and: [{ "ads_for": { $eq: ADS_TYPE.STORE_LIST } }, { is_ads_visible: { $eq: true } }, { is_ads_approve_by_admin: { $eq: true } }] } };
+                    Advertise.aggregate([city_condition, ads_condition, lookup, unwind, project]).then((advertise) => {
+
+
+                        let city_lat_long = city.city_lat_long;
+
+                        if (request_data_body.latitude && request_data_body.longitude) {
+                            city_lat_long = [request_data_body.latitude, request_data_body.longitude]
+                        }
+
+                        let distance = city.city_radius / UNIT.DEGREE_TO_KM;
+
+                        Country.findOne({ _id: city.country_id }).then((country) => {
+
+                            if (city && city.is_ads_visible && country && country.is_ads_visible) {
+                                ads = advertise;
+                            }
+
+                            let store_location_query = {
+                                $geoNear: {
+                                    near: city_lat_long,
+                                    distanceField: "distance",
+                                    uniqueDocs: true,
+                                    maxDistance: 100000000
+                                }
+                            }
+
+                            let store_aggregate = [store_location_query, {
+                                $match: {
+                                    $and: [
+                                        { "is_approved": { "$eq": true } },
+                                        { "is_business": { "$eq": true } },
+                                        { "is_visible": { "$eq": true } },
+                                        { "city_id": { $eq: Schema(city_id) } },
+                                        { "sub_category_id": { $eq: Schema(sub_category_id) } }
                                     ]
                                 }
                             },
@@ -4977,8 +5358,8 @@ exports.order_history_detail = function (request_data, response_data) {
 };
 
 // USER HISTORY LIST
-exports.order_history = function (request_data, response_data) {
-
+exports.order_history = function (request_data, response_data) 
+{
     utils.check_request_params(request_data.body, [{ name: 'start_date', type: 'string' }, { name: 'end_date', type: 'string' }], function (response) {
         if (response.success) {
 

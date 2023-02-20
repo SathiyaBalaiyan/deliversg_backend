@@ -46,7 +46,8 @@ exports.add_document_data = async function (request_data, response_data) {
         let document = new Document(request_data_body);
         let documentCount = 1;
         let document_count = await Document_uploaded_list.findOne({}).lean().select({ unique_id: 1 }).sort({ unique_id: -1 });
-        if (document_count) {
+        if (document_count) 
+        {
             documentCount = document_count.unique_id + 1;
         }
         switch (document_for) {

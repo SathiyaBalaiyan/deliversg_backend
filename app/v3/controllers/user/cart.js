@@ -18,6 +18,290 @@ var geolib = require('geolib');
 var console = require('../../utils/console');
 const { json } = require('express');
 
+
+// replace order or reorder
+exports.replace_order = function (request_data, response_data) {
+    utils.check_request_params(request_data.body, [{name: 'order_id', type: 'string'}, {name: 'user_id', type: 'string'}], function (response) {
+        if (response.success) {
+
+            var request_data_body = request_data.body;
+            var order_id = request_data_body.order_id;
+            var user_id = request_data_body.user_id;
+            
+
+            User.findOne({_id: request_data_body.user_id}).then((user) => {
+
+                    var cart_id = null;
+                    var user_id = null;
+
+                    if (user)
+                    {
+                        cart_id = user.cart_id;
+                        user_id = user._id;
+                    }
+
+                    Cart.findOne({$and: [{order_id: order_id}, {user_id: user_id}]}).then((cart_detail) => {
+
+                        if (cart_detail) {
+
+                            order_id = cart_detail.order_id;
+                            user_id = cart_detail.user_id;
+
+                            var query = {
+                                $match: {
+                                    _id: { $eq: mongoose.Types.ObjectId(cart_detail.store_id) }
+                                }
+                            }
+
+                            var tax_lookup = {
+                                $lookup: {
+                                    from: "taxes",
+                                    localField: "taxes",
+                                    foreignField: "_id",
+                                    as: "tax_details"
+                                }
+                            }
+
+                            Store.aggregate([query, tax_lookup]).then((store_detials) => {
+                                var store = store_detials[0]
+                                // Store.findOne({_id: cart_detail.store_id}).then((store) => {
+
+                                if (store)
+                                {
+                                    if (store.is_business)
+                                    {
+                                        Country.findOne({_id: store.country_id}).then((country) => {
+
+                                            var currency = "";
+                                            if (country)
+                                            {
+                                                currency = country.currency_sign;
+                                            }
+
+                                            Cart.aggregate([
+
+                                                {$match: {user_id: mongoose.Types.ObjectId(request_data_body.user_id), order_id: mongoose.Types.ObjectId(request_data_body.order_id)}},
+                                                {$unwind: "$order_details"},
+                                                {$unwind: "$order_details.items"},
+                                                {$lookup: {
+                                                        from: "items",
+                                                        localField: "order_details.items.unique_id",
+                                                        foreignField: "unique_id",
+                                                        as: "order_details.items.item_details"
+                                                    }
+                                                },
+                                                {
+                                                    $match: {$and: [{"order_details.items.item_details.is_item_in_stock": true},
+                                                            {"order_details.items.item_details.is_visible_in_store": true}]
+                                                    }
+                                                },
+                                                {$unwind: "$order_details.items.item_details"},
+                                                {
+                                                    $lookup: {
+                                                        from: "taxes",
+                                                        localField: "order_details.items.item_details.item_taxes",
+                                                        foreignField: "_id",
+                                                        as: "order_details.items.item_details.tax_details"
+                                                    }
+                                                },
+                                                {$project: {
+                                                        "_id": 1,
+                                                        "user_type": 1,
+                                                        "store_id": 1,
+                                                        "order_payment_id": 1,
+                                                        "total_item_tax": 1,
+                                                        "delivery_type": 1,
+                                                        "pickup_addresses": 1,
+                                                        "destination_addresses": 1,
+                                                        "total_item_count": 1,
+                                                        "total_cart_price": 1,
+                                                        "cart_unique_token": 1,
+                                                        "user_id": 1,
+                                                        "user_type_id": 1,
+                                                        "order_id": 1,
+                                                        "city_id": 1,
+                                                        "unique_id": 1,
+                                                        "order_details.product_id": "$order_details.product_id",
+                                                        "order_details.product_name": "$order_details.product_name",
+                                                        "order_details.total_item_tax": "$order_details.total_item_tax",
+                                                        "order_details.total_item_price": "$order_details.total_item_price",
+                                                        "order_details.unique_id": "$order_details.unique_id",
+                                                        "order_details.items.details": "$order_details.items.details",
+                                                        "order_details.items.image_url": "$order_details.items.image_url",
+                                                        "order_details.items.item_id": "$order_details.items.item_id",
+                                                        "order_details.items.item_name": "$order_details.items.item_name",
+                                                        "order_details.items.note_for_item": "$order_details.items.note_for_item",
+                                                        "order_details.items.item_price": "$order_details.items.item_price",
+                                                        "order_details.items.item_tax": "$order_details.items.item_tax",
+                                                        "order_details.items.max_item_quantity": "$order_details.items.max_item_quantity",
+                                                        "order_details.items.quantity": "$order_details.items.quantity",
+                                                        "order_details.items.specifications": "$order_details.items.specifications",
+                                                        "order_details.items.tax": "$order_details.items.tax",
+                                                        "order_details.items.total_item_price": "$order_details.items.total_item_price",
+                                                        "order_details.items.total_item_tax": "$order_details.items.total_item_tax",
+                                                        "order_details.items.total_price": "$order_details.items.total_price",
+                                                        "order_details.items.total_specification_price": "$order_details.items.total_specification_price",
+                                                        "order_details.items.total_specification_tax": "$order_details.items.total_specification_tax",
+                                                        "order_details.items.total_tax": "$order_details.items.total_tax",
+                                                        "order_details.items.unique_id": "$order_details.items.unique_id",
+                                                        "order_details.items.tax_details": "$order_details.items.tax_details",
+                                                        "order_details.items.item_details._id": "$order_details.items.item_details._id",
+                                                        "order_details.items.item_details.super_item_id": "$order_details.items.item_details.super_item_id",
+                                                        "order_details.items.item_details.name": { $ifNull: [{$arrayElemAt: [ "$order_details.items.item_details.name", Number(request_data.headers.lang) ]}, { $ifNull: [{$arrayElemAt: [ "$order_details.items.item_details.name", 0 ]}, ""] }] },
+                                                        "order_details.items.item_details.details": { $ifNull: [{$arrayElemAt: [ "$order_details.items.item_details.details", Number(request_data.headers.lang) ]}, { $ifNull: [{$arrayElemAt: [ "$order_details.items.item_details.details", 0 ]}, ""] }] },
+                                                        "order_details.items.item_details.price": "$order_details.items.item_details.price",
+                                                        "order_details.items.item_details.offer_message_or_percentage": "$order_details.items.item_details.offer_message_or_percentage",
+                                                        "order_details.items.item_details.item_price_without_offer": "$order_details.items.item_details.item_price_without_offer",
+                                                        "order_details.items.item_details.total_quantity": "$order_details.items.item_details.total_quantity",
+                                                        "order_details.items.item_details.in_cart_quantity": "$order_details.items.item_details.in_cart_quantity",
+                                                        "order_details.items.item_details.total_added_quantity": "$order_details.items.item_details.total_added_quantity",
+                                                        "order_details.items.item_details.total_used_quantity": "$order_details.items.item_details.total_used_quantity",
+                                                        "order_details.items.item_details.sequence_number": "$order_details.items.item_details.sequence_number",
+                                                        "order_details.items.item_details.note_for_item": "$order_details.items.item_details.note_for_item",
+                                                        "order_details.items.item_details.unique_id_for_store_data": "$order_details.items.item_details.unique_id_for_store_data",
+                                                        "order_details.items.item_details.is_item_in_stock": "$order_details.items.item_details.is_item_in_stock",
+                                                        "order_details.items.item_details.is_item_in_stock": "$order_details.items.item_details.is_item_in_stock",
+                                                        "order_details.items.item_details.is_most_popular": "$order_details.items.item_details.is_most_popular",
+                                                        "order_details.items.item_details.is_visible_in_store": "$order_details.items.item_details.is_visible_in_store",
+                                                        "order_details.items.item_details.tax": "$order_details.items.item_details.tax",
+                                                        "order_details.items.item_details.specifications_unique_id_count": "$order_details.items.item_details.specifications_unique_id_count",
+                                                        "order_details.items.item_details.specifications": "$order_details.items.item_details.specifications",
+                                                        "order_details.items.item_details.image_url": "$order_details.items.item_details.image_url",
+                                                        "order_details.items.item_details.store_id": "$order_details.items.item_details.store_id",
+                                                        "order_details.items.item_details.product_id": "$order_details.items.item_details.product_id",
+                                                        "order_details.items.item_details.unique_id": "$order_details.items.item_details.unique_id",
+                                                        "order_details.items.item_details.tax_details": "$order_details.items.item_details.tax_details",
+                                                    }
+                                                },
+                                                {$group: {
+                                                        _id: {order_id: '$_id', unique_id: "$order_details.unique_id"},
+                                                        "items": {$push: "$order_details.items"}
+                                                    }
+                                                },
+                                                {$lookup: {
+                                                        from: "products",
+                                                        localField: "_id.unique_id",
+                                                        foreignField: "unique_id",
+                                                        as: "_id.product_detail"
+                                                    }
+                                                },
+                                                {
+                                                    $match: {
+                                                        "_id.product_detail.is_visible_in_store": true
+                                                    }
+                                                },
+                                                {$unwind: "$_id.product_detail"},
+                                                {$project: {
+                                                        "order_detail.unique_id": "$_id.unique_id",
+                                                        "order_detail.product_detail._id": "$_id.product_detail._id",
+                                                        "order_detail.product_detail.name": { $ifNull: [{$arrayElemAt: [ "$_id.product_detail.name", Number(request_data.headers.lang) ]}, { $ifNull: [{$arrayElemAt: [ "$_id.product_detail.name", 0 ]}, ""] }] },
+                                                        "order_detail.product_detail.is_visible_in_store": "$_id.product_detail.is_visible_in_store",
+                                                        "order_detail.product_detail.super_product_id": "$_id.product_detail.super_product_id",
+                                                        "order_detail.product_detail.group_id": "$_id.product_detail.group_id",
+                                                        "order_detail.product_detail.unique_id_for_store_data": "$_id.product_detail.unique_id_for_store_data",
+                                                        "order_detail.product_detail.sequence_number": "$_id.product_detail.sequence_number",
+                                                        "order_detail.product_detail.store_id": "$_id.product_detail.store_id",
+                                                        "order_detail.product_detail.unique_id": "$_id.product_detail.unique_id",
+                                                        "order_detail.items": "$items"
+                                                    }
+                                                }
+                                            ]).then((cart) => {
+                                                if (cart.length == 0) {
+                                                    response_data.json({success: false, error_code: CART_ERROR_CODE.CART_NOT_FOUND});
+                                                } else
+                                                {
+                                                    store_name = "";
+                                                    var store_name = store.name[Number(request_data.headers.lang)];
+                                                    if(!store_name || store_name == ''){
+                                                        store_name = store.name[0];
+                                                    }
+                                                    if(!store_name){
+                                                        store_name = "";
+                                                    }
+                                                    response_data.json({success: true,
+                                                        message: CART_MESSAGE_CODE.CART_GET_SUCCESSFULLY,
+                                                        currency: currency,
+                                                        cart_id: cart_detail._id,
+                                                        city_id: cart_detail.city_id,
+                                                        store_id: store._id,
+                                                        delivery_type: cart_detail.delivery_type,
+                                                        booking_type: cart_detail.booking_type,
+                                                        tax_details: store.tax_details,
+                                                        languages_supported: store.languages_supported,
+                                                        store_time: store.store_time, 
+                                                        is_use_item_tax: store.is_use_item_tax,
+                                                        is_tax_included: store.is_tax_included,
+                                                        item_tax: store.item_tax,
+                                                        name: store_name,
+                                                        max_item_quantity_add_by_user: store.max_item_quantity_add_by_user,
+                                                        destination_addresses: cart_detail.destination_addresses,
+                                                        pickup_addresses: cart_detail.pickup_addresses,
+                                                        no_of_persons: cart_detail.no_of_persons,
+                                                        table_no: cart_detail.no_of_persons,
+                                                        cart: cart[0]});
+                                                }
+                                            }, (error) => {
+                                                console.log(error);
+                                                response_data.json({
+                                                    success: false,
+                                                    error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                                                });
+                                            });
+                                        }, (error) => {
+                                            console.log(error)
+                                            response_data.json({
+                                                success: false,
+                                                error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                                            });
+                                        });
+                                    } else
+                                    {
+                                        if (user)
+                                        {
+                                            user.cart_id = null;
+                                            user.save();
+                                        }
+                                        response_data.json({success: false, error_code: STORE_ERROR_CODE.STORE_BUSINESS_OFF});
+                                    }
+
+                                } else
+                                {
+                                    response_data.json({success: false, error_code: STORE_ERROR_CODE.STORE_DATA_NOT_FOUND});
+                                }
+                            }, (error) => {
+                                console.log(error)
+                                response_data.json({
+                                    success: false,
+                                    error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                                });
+                            });
+                        } else
+                        {
+                            response_data.json({success: false, error_code: CART_ERROR_CODE.CART_NOT_FOUND});
+                        }
+                    }, (error) => {
+                        console.log(error)
+                        response_data.json({
+                            success: false,
+                            error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                        });
+                    });
+                
+            }, (error) => {
+                console.log(error)
+                response_data.json({
+                    success: false,
+                    error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+                });
+            });
+
+        } else {
+            response_data.json(response);
+        }
+    });
+};
+
+
 // user add_item_in_cart
 exports.add_item_in_cart = function (request_data, response_data) {
 

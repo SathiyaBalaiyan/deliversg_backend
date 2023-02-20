@@ -67,6 +67,10 @@
         "target": "http://localhost:8000",
         "secure": false
     },
+    "/sub_category_images": {
+        "target": "http://localhost:8000",
+        "secure": false
+    },
     "/delivery_icon_images": {
         "target": "http://localhost:8000",
         "secure": false
