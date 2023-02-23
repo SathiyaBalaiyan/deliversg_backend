@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 
     router.post('/admin/get_bad_weather_status', city.get_bad_weather_status);
+    router.post('/admin/update_bad_weather_status', city.update_bad_weather_status);
 
     router.get('/admin/get_server_country_list', city.get_server_country_list);
     router.post('/admin/add_city_data', city.add_city_data);

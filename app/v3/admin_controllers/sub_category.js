@@ -33,12 +33,6 @@ exports.add_sub_category = function (request_data, response_data)
             Delivery.findOne({ _id: request_data_body.store_delivery_id }).then((deliveryId) => {
                 if (deliveryId)
                 {
-                    // var vehicle_document_condition = {"$match": {'store_id': {$eq: null}}};
-                    // if(request_data_body.store_id != undefined)
-                    // {
-                    //     vehicle_document_condition = {"$match": {'store_id': {$eq: mongoose.Types.ObjectId(request_data_body.store_id)}}};
-                    // }
-
                     SubCategory.findOne(query, function (err, subCategory) 
                     {
                         if (subCategory) 

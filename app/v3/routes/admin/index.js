@@ -68,6 +68,7 @@ var activity_logs = require('../../controllers/admin/activity_logs') // include 
     router.post('/api/admin/update_script_page', script.updateScriptPage);
 
     router.post('/admin/add_sub_category', sub_category.add_sub_category);
+   
 
 
 module.exports = router;

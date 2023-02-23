@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
 var autoIncrement = require('mongoose-auto-increment');
+
 var city = new schema({
     unique_id: Number,
     bad_weather: {type: Boolean, default: false},

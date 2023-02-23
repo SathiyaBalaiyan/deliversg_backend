@@ -37,30 +37,6 @@ const { Console } = require('console');
 let ProductGroup = require('mongoose').model('ProductGroup');
 let Cancellation_reason = require('mongoose').model('cancellation_reason');
 
-let date_time = new Date();
-let current_date = date_time.setTime(date_time.getTime() + (150 * 60 * 1000));
-console.log(date_time);
-
-let date = ("0" + date_time.getDate()).slice(-2);
-
-// get current month
-let month = ("0" + (date_time.getMonth() + 1)).slice(-2);
-
-// get current year
-let year = date_time.getFullYear();
-
-// get current hours
-let hours = date_time.getHours();
-
-// get current minutes
-let minutes = ("0" + date_time.getMinutes()).slice(-2);
-
-// get current seconds
-let seconds = ("0" + date_time.getSeconds()).slice(-2);
-
-console.log(year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds);
-console.log(new Date());
-
 // USER REGISTER API
 exports.user_register = function (request_data, response_data) {
     utils.check_request_params(request_data.body, [{ name: 'email', type: 'string' }/*, { name: 'country_id', type: 'string' }*/, { name: 'phone', type: 'string' },
