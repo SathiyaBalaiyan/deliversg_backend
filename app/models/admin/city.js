@@ -4,7 +4,6 @@ var autoIncrement = require('mongoose-auto-increment');
 
 var city = new schema({
     unique_id: Number,
-    bad_weather: {type: Boolean, default: false},
     country_id: {type: schema.Types.ObjectId},
     city_code: {type: String, default: ""},
     city_name: {type: String, default: ""},

@@ -166,6 +166,7 @@ const medium_priority = [
     { url: "api/user/delete_card", type: 'POST' },
 
     { url: "admin/add_sub_category", type: "POST" },
+    { url: "admin/add_bad_weather", type: "POST" },
     { url: "admin/lists", type: "GET" },
     { url: "api/store/sub_store_login", type: "POST" },
     { url: "api/store/login", type: "POST" },

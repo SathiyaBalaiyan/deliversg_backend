@@ -13,68 +13,68 @@ var DOMParser = require('xmldom').DOMParser;
 var togeojson = require('togeojson');
 var console = require('../utils/console');
 
-// update_bad_weather
-exports.update_bad_weather_status = function (request_data, response_data) {
-    utils.check_request_params(request_data.body, [{name: 'city_id', type: 'string'}, {name: 'bad_weather', type: 'string'}], function (response) {
-        if (response.success) {
+// // update_bad_weather
+// exports.update_bad_weather_status = function (request_data, response_data) {
+//     utils.check_request_params(request_data.body, [{name: 'city_id', type: 'string'}, {name: 'bad_weather', type: 'string'}], function (response) {
+//         if (response.success) {
 
-            var request_data_body = request_data.body;
-            var city_id = request_data_body.city_id;
-            var bad_weather = request_data_body.bad_weather;
+//             var request_data_body = request_data.body;
+//             var city_id = request_data_body.city_id;
+//             var bad_weather = request_data_body.bad_weather;
             
-            City.findOneAndUpdate({_id: city_id}, request_data_body, {new : true}).then((city_data) => {
+//             City.findOneAndUpdate({_id: city_id}, request_data_body, {new : true}).then((city_data) => {
 
-                if (city_data)
-                {
-                    city_data.bad_weather = bad_weather;
-                    city_data.save();
+//                 if (city_data)
+//                 {
+//                     city_data.bad_weather = bad_weather;
+//                     city_data.save();
 
-                    response_data.json({success: true, message: CITY_MESSAGE_CODE.UPDATE_SUCCESSFULLY});
-                } else
-                {
-                    response_data.json({success: false, error_code: CITY_ERROR_CODE.UPDATE_FAILED});
-                }
-            }, (error) => {
-                console.log(error);
-                response_data.json({
-                    success: false,
-                    error_code: ERROR_CODE.SOMETHING_WENT_WRONG
-                });
-            });
-        } else {
-            response_data.json(response);
-        }
-    });
-};
+//                     response_data.json({success: true, message: CITY_MESSAGE_CODE.UPDATE_SUCCESSFULLY});
+//                 } else
+//                 {
+//                     response_data.json({success: false, error_code: CITY_ERROR_CODE.UPDATE_FAILED});
+//                 }
+//             }, (error) => {
+//                 console.log(error);
+//                 response_data.json({
+//                     success: false,
+//                     error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+//                 });
+//             });
+//         } else {
+//             response_data.json(response);
+//         }
+//     });
+// };
 
-//To get bad weather condition
-exports.get_bad_weather_status = function (request_data, response_data) {
-    utils.check_request_params(request_data.body, [{ name: 'city_id', type: 'string' }], function (response) 
-    {
-        if (response.success) {
+// //To get bad weather condition
+// exports.get_bad_weather_status = function (request_data, response_data) {
+//     utils.check_request_params(request_data.body, [{ name: 'city_id', type: 'string' }], function (response) 
+//     {
+//         if (response.success) {
 
-            var request_data_body = request_data.body;
-            City.findOne({_id: request_data_body.city_id}, {bad_weather: 1, city_name: 1, city_code: 1, timezone: 1}).then((country) => {
-                if (!country) {
-                    response_data.json({success: false, error_code: CITY_ERROR_CODE.CITY_DETAILS_NOT_FOUND});
-                } else {
-                    response_data.json({success: true,
-                        message: CITY_MESSAGE_CODE.CITY_LIST_SUCCESSFULLY,
-                        country: country
-                    });
-                }
-            }, (error) => {
-                console.log(error);
-                response_data.json({
-                    success: false,
-                    error_code: ERROR_CODE.SOMETHING_WENT_WRONG
-                });
-            });
-        } else {
-            response_data.json(response);
-        }
-    });
-}
+//             var request_data_body = request_data.body;
+//             City.findOne({_id: request_data_body.city_id}, {bad_weather: 1, city_name: 1, city_code: 1, timezone: 1}).then((country) => {
+//                 if (!country) {
+//                     response_data.json({success: false, error_code: CITY_ERROR_CODE.CITY_DETAILS_NOT_FOUND});
+//                 } else {
+//                     response_data.json({success: true,
+//                         message: CITY_MESSAGE_CODE.CITY_LIST_SUCCESSFULLY,
+//                         country: country
+//                     });
+//                 }
+//             }, (error) => {
+//                 console.log(error);
+//                 response_data.json({
+//                     success: false,
+//                     error_code: ERROR_CODE.SOMETHING_WENT_WRONG
+//                 });
+//             });
+//         } else {
+//             response_data.json(response);
+//         }
+//     });
+// }
 
 // get_server_country_list
 exports.get_server_country_list = function (request_data, response_data) {

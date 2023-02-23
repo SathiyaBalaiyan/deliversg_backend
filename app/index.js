@@ -58,6 +58,7 @@ router.use('', require('./v3/admin_routes/sms'))
 router.use('', require('./v3/admin_routes/legal'))
 router.use('', require('./v3/admin_routes/cancellation_reason'))
 router.use('', require('./v3/admin_routes/sub_category'))
+router.use('', require('./v3/admin_routes/bad_weather'))
 
 
 

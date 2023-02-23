@@ -3,9 +3,6 @@ require('../../utils/error_code');
 require('../../utils/constants');
 var utils = require('../../utils/utils');
 var console = require('../../utils/console');
-
-
-
 var Country = require('mongoose').model('country');
 
 //// get country list

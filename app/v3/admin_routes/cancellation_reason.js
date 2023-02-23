@@ -9,4 +9,4 @@ var router = express.Router();
     router.get('/admin/cancellationreason_list', cancellation_reason.cancellation_reason_list);
     router.post('/admin/get_cancellation_reason', cancellation_reason.get_cancellation_reason);
     
-module.exports = router;
+module.exports = router; 
