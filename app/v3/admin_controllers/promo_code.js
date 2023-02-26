@@ -333,7 +333,6 @@ exports.update_promo_code = function (request_data, response_data) {
 
             Promo_code.findOneAndUpdate({ _id: promo_id }, request_data_body, { new: true }).then((promo_code_data) => {
 
-
                 if (promo_code_data) {
                     var image_file = request_data.files;
                     if (image_file != undefined && image_file.length > 0) {

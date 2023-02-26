@@ -271,7 +271,7 @@ exports.delete_product_group = function (request_data, response_data) {
 exports.update_product_group = function (request_data, response_data) {
     utils.check_unique_details(request_data, [{name: 'product_group_id', type: 'string'}], function (response) {
         if (response.success) {
-
+ 
             var request_data_body = request_data.body;
             if(request_data_body.name){
                 if(typeof request_data_body.name == "string"){

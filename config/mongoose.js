@@ -116,6 +116,8 @@ module.exports = function () {
     require('../app/models/admin/store_seo');
     require('../app/models/admin/sub_category');
     require('../app/models/admin/bad_weather');
+    require('../app/models/admin/peak_hour');
+    require('../app/models/admin/deliver_fee');
  
     return db;
 };

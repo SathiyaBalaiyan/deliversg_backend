@@ -763,7 +763,7 @@ exports.import_item_product = async function (request_data, response_data) {
 			                sequence_number:array_of_data[i][PRODUCT_SEQUENCE_NUMBER],
 			                items:[]
 			            })
-
+ 
 			        	if(array_of_data[i][PRODUCT_COMMAND] == blankCommand){
 			        		products[products.length -1].error = true;
 			        	}

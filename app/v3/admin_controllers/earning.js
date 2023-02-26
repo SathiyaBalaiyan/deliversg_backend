@@ -285,7 +285,6 @@ exports.fetch_earning_detail = function(request_data,response_data){
 }
 
 
-
 // exports.get_admin_earning = function (request_data, response_data) {
 //     utils.check_request_params(request_data.body, [], function (response) {
 //         if (response.success) {

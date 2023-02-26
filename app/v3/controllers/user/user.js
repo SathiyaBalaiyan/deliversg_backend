@@ -532,6 +532,7 @@ exports.user_update = function (request_data, response_data) {
             let social_id = request_data_body.social_id;
             let user_email_update = false
 
+
             if (social_id == undefined || social_id == null || social_id == 'null' || social_id == "") {
                 social_id = null;
             }

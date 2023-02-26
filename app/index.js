@@ -59,6 +59,8 @@ router.use('', require('./v3/admin_routes/legal'))
 router.use('', require('./v3/admin_routes/cancellation_reason'))
 router.use('', require('./v3/admin_routes/sub_category'))
 router.use('', require('./v3/admin_routes/bad_weather'))
+router.use('', require('./v3/admin_routes/peak_hour'))
+router.use('', require('./v3/admin_routes/deliver_fee'))
 
 
 

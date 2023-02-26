@@ -14,7 +14,7 @@ var store = new schema({
     store_type_id: { type: schema.Types.ObjectId },
     franchise_id: { type: schema.Types.ObjectId ,default:null},
     store_delivery_id: { type: schema.Types.ObjectId },
-    sub_category_id: { type: schema.Types.ObjectId ,default:null},
+    sub_category_id: [{type: schema.Types.ObjectId, default: []}],
     payment_intent_id: {type: String, default: ""},
     // STORE INFORMATION
     name: [{type: String,default:[]}],

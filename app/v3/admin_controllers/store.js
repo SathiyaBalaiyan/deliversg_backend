@@ -73,7 +73,6 @@ exports.filter_sub_categories = function (request_data, response_data) {
 
 };
 
-
 // store_list_search_sort
 exports.store_list_search_sort = function (request_data, response_data) {
     utils.check_request_params(request_data.body, [], function (response) {

@@ -13,6 +13,7 @@ let seo = require('../../controllers/admin/seo')
 let script = require('../../admin_controllers/script_page')
 var sub_category = require('../../admin_controllers/sub_category')
 var bad_weather = require('../../admin_controllers/bad_weather')
+var peak_hour = require('../../admin_controllers/peak_hour')
 var activity_logs = require('../../controllers/admin/activity_logs') // include activity logs controller
 
     router.post('/get_activity_logs', activity_logs.get_activity_logs)
@@ -68,8 +69,10 @@ var activity_logs = require('../../controllers/admin/activity_logs') // include 
     router.post('/api/admin/delete_script_page', script.deleteScriptPage);
     router.post('/api/admin/update_script_page', script.updateScriptPage);
 
-    router.post('/admin/add_sub_category', sub_category.add_sub_category);
-    router.post('/admin/add_bad_weather', bad_weather.add_bad_weather)
+    router.post('/admin/add_sub_category', sub_category.add_sub_category);   
+    router.post('/admin/add_bad_weather', bad_weather.add_bad_weather);
+    router.post('/admin/add_peak_hour_status', peak_hour.add_peak_hour_status);
+    
 
 
 module.exports = router;
